@@ -23,6 +23,7 @@ func (repo TelegramRepositoryMock) SendTelegramMessage(reqBody []byte) error {
 func TestParseTelegramCommand(t *testing.T) {
 	message := new(domain.WebhookBody)
 	message.Message.Text = "/help"
+	message.Message.Chat.ID = int64(123456)
 	response, _ := ParseTelegramCommand(message)
 	if !strings.Contains(response, "OK") {
 		t.Fatalf("Invalid 1.1 TestParseTelegramCommand %s", response)

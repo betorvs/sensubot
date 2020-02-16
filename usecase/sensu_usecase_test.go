@@ -163,7 +163,7 @@ func TestRequestSensu(t *testing.T) {
 	_ = requestSensu("get all namespaces")
 	expected := 1
 	if sensuGetRequestCalls != expected {
-		t.Fatalf("Invalid 14.1 TestRequestSensu %d", expected)
+		t.Fatalf("Invalid 14.1 TestRequestSensu %d", sensuGetRequestCalls)
 	}
 
 }
@@ -173,8 +173,8 @@ func TestRequestSensuHealth(t *testing.T) {
 	appcontext.Current.Add(appcontext.SensuRepository, repo)
 	_ = repo.SensuHealth("http://sensu-api:8080")
 	expected := 1
-	if sensuGetRequestCalls != expected {
-		t.Fatalf("Invalid 15.1 TestRequestSensuHealth %d", expected)
+	if sensuHealthRequestCalls != expected {
+		t.Fatalf("Invalid 15.1 TestRequestSensuHealth %d", sensuHealthRequestCalls)
 	}
 
 }
