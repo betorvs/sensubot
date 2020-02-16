@@ -1,6 +1,8 @@
 SensuBot
 ========
 
+Travis-CI: [![Build Status](https://travis-ci.org/betorvs/sensubot.svg?branch=master)](https://travis-ci.org/betorvs/sensubot)
+
 SensuBot can receive messages from Slack and/or Telegram. It can answer simple commands like get, execute and silence.
 
 It can list almost all resources available in Sensu: assets, checks, entities, events, namespaces, mutators, filters, handlers, hooks and health.
