@@ -48,7 +48,7 @@ func GetEnv(key, defaultValue string) string {
 func init() {
 	Port = GetEnv("SENSUBOT_PORT", "9090")
 	Timeout = GetEnv("SENSUBOT_TIMEOUT", "15")
-	DebugSensuRequests = GetEnv("SENSUBOT_DEBUG_SENSU_REQUESTS", "true")
+	DebugSensuRequests = GetEnv("SENSUBOT_DEBUG_SENSU_REQUESTS", "false")
 	SlackSlashCommand = GetEnv("SENSUBOT_SLASH_COMMAND", "/sensubot")
 	SlackToken = GetEnv("SENSUBOT_SLACK_TOKEN", "disabled")
 	SlackSigningSecret = GetEnv("SENSUBOT_SLACK_SIGNING_SECRET", "disabled")

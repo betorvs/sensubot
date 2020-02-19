@@ -9,7 +9,7 @@ install:
   | sh -s -- -b $(go env GOPATH)/bin v1.22.2
 script:
 - "$(go env GOPATH)/bin/golangci-lint run"
-- SENSUBOT_API_TOKEN=aaa SENSUBOT_API_URL="http://sensu-api:8080" TESTRUN=true go test -v ./...
+- SENSUBOT_API_TOKEN=aaa SENSUBOT_API_URL="http://sensu-api:8080" TESTRUN=true go test -v -race ./...
 - docker build -f Dockerfile -t betorvs/sensubot:$COMMIT .
 env:
   global:

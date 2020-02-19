@@ -1,5 +1,7 @@
 package appcontext
 
+import "sync"
+
 //List of consts containing the names of the available componentes in the Application Context - appcontext.Current
 const (
 	SensuRepository    = "SensuRepository"
@@ -12,7 +14,8 @@ type Component interface{}
 
 //ApplicationContext is the type defining a map of Components
 type ApplicationContext struct {
-	components map[string]Component
+	components  map[string]Component
+	componentMu sync.Mutex
 }
 
 //Current keeps all components available, initialized in the application startup
@@ -20,11 +23,15 @@ var Current ApplicationContext
 
 //Add a component By Name
 func (applicationContext *ApplicationContext) Add(componentName string, component Component) {
+	applicationContext.componentMu.Lock()
+	defer applicationContext.componentMu.Unlock()
 	applicationContext.components[componentName] = component
 }
 
 //Get a component By Name
 func (applicationContext *ApplicationContext) Get(componentName string) Component {
+	applicationContext.componentMu.Lock()
+	defer applicationContext.componentMu.Unlock()
 	return applicationContext.components[componentName]
 }
 

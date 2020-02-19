@@ -10,8 +10,10 @@ import (
 
 // ParseTelegramCommand func
 func ParseTelegramCommand(data *domain.WebhookBody) (string, error) {
-	textRequest := strings.ToLower(data.Message.Text)
-	go sendResultTelegram(textRequest, data.Message.Chat.ID)
+	textRequest := strings.Split(strings.ToLower(data.Message.Text), " ")
+	if len(textRequest) > 2 {
+		go sendResultTelegram(data.Message.Text, data.Message.Chat.ID)
+	}
 	return "OK", nil
 }
 
