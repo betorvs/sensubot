@@ -107,3 +107,21 @@ kubectl apply -f k8s-deployment.yaml
 ```
 
 If your sensu backend api use https, don't forgot to add CA certificate into secrets and change `SENSUBOT_API_SCHEME` to use https.
+
+## Example of commands
+
+in Slack:
+```
+/sensubot get all checks
+/sensubot get health
+
+```
+
+in Telegram:
+```
+@sensu_example_bot get all checks
+```
+or directly messages:
+```
+get all checks
+```
