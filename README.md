@@ -86,15 +86,23 @@ With CA Certiticate
 ```sh
 kubectl create secret generic sensubot --from-literal=sensubotApiToken=LONGHASH \
   --from-literal=slackToken=xxx-9X-zxczxczxczxc --from-literal=slackSigningSecret=asdasdasd-asdasdsad-123 \
-  --from-file=sensuCACertificate=./ca.pem \
   -n sensubot --dry-run -o yaml > sensubot-secret.yaml
+ kubectl create secret generic sensu-ca-pem --from-file=sensuca=./ca.pem -n sensubot --dry-run -o yaml > sensu-ca-secret.yaml
 ```
 
 ## Deployment
 
+Before applying [k8s-deployment.yaml](k8s-deployment.yaml) file using kubectl, change it:
+- line 28: choose https or http depends how you configure sensu backend api;
+- line 32: from sensu-api.sensu.svc.cluster.local:8080 to your sensu backend api URL;
+- line 34: change to your Channel in Slack;
+- lines 50 and 51: use only if you use create sensu backend certiticates with your own Certificate Authority (CA). 
+- line 91: from sensubot.example.local to your domain.
+
 ```sh
 kubectl create ns sensubot
 kubectl apply -f sensubot-secrets.yaml
+kubectl apply -f sensu-ca-secret.yaml
 kubectl apply -f k8s-deployment.yaml
 ```
 
