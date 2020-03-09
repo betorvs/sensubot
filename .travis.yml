@@ -6,16 +6,26 @@ services:
 
 install:
 - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh
-  | sh -s -- -b $(go env GOPATH)/bin v1.22.2
+  | sh -s -- -b $(go env GOPATH)/bin v1.23.8
+- echo "REPO $TRAVIS_REPO_SLUG TAG ${TRAVIS_TAG}"
 script:
-- "$(go env GOPATH)/bin/golangci-lint run"
-- SENSUBOT_API_TOKEN=aaa SENSUBOT_API_URL="http://sensu-api:8080" TESTRUN=true go test -v -race ./...
+- "$(go env GOPATH)/bin/golangci-lint run --timeout 5m"
+- SENSUBOT_TELEGRAM_TOKEN=disabled SENSUBOT_API_TOKEN=aaa SENSUBOT_API_URL="http://sensu-api:8080" TESTRUN=true go test -v -race ./...
 - docker build -f Dockerfile -t betorvs/sensubot:$COMMIT .
 env:
   global:
   - COMMIT=${TRAVIS_COMMIT::8}
-after_success:
-- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-- docker push betorvs/sensubot:$COMMIT
-- docker tag betorvs/sensubot:$COMMIT betorvs/sensubot:latest
-- docker push betorvs/sensubot:latest
+# after_success:
+# - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+# - docker push betorvs/sensubot:$COMMIT
+# - docker tag betorvs/sensubot:$COMMIT betorvs/sensubot:latest
+# - docker push betorvs/sensubot:latest
+deploy:
+  - provider: script
+    script: bash travis_deploy.sh "betorvs/sensubot" $COMMIT false
+    on:
+      branch: master
+  - provider: script
+    script: bash travis_deploy.sh "betorvs/sensubot" ${TRAVIS_TAG} true
+    on:
+      tags: true

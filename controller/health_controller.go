@@ -1,18 +1,19 @@
 package controller
 
 import (
-    "net/http"
-    "github.com/labstack/echo/v4"
+	"net/http"
+
+	"github.com/labstack/echo/v4"
 )
 
 // Health struct
 type Health struct {
-    Status string `json:"status"`
+	Status string `json:"status"`
 }
 
 // CheckHealth func to use by LB
 func CheckHealth(c echo.Context) error {
-    health := Health{}
-    health.Status = "UP"
-    return c.JSON(http.StatusOK, health)
+	health := Health{}
+	health.Status = "UP"
+	return c.JSON(http.StatusOK, health)
 }

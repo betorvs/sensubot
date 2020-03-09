@@ -10,3 +10,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Slack Endpoint sensu_bot_url/sensubot/v1/slack
 - Integration with Sensu API using token
+- Add tests in usecase, appcontext, controller
+- Add build script to control tag version and branch version
