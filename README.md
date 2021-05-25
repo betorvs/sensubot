@@ -2,6 +2,7 @@ SensuBot
 ========
 
 ![Go Test](https://github.com/betorvs/sensubot/workflows/Go%20Test/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/betorvs/sensubot/badge.svg?branch=main)](https://coveralls.io/github/betorvs/sensubot?branch=main)
 
 SensuBot can receive messages from Slack and/or Telegram. It can answer simple commands like get, execute and silence.
 
