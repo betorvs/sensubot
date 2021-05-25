@@ -3,17 +3,13 @@ package controller
 import (
 	"net/http"
 
+	"github.com/betorvs/sensubot/domain"
 	"github.com/labstack/echo/v4"
 )
 
-// Health struct
-type Health struct {
-	Status string `json:"status"`
-}
-
-// CheckHealth func to use by LB
+//CheckHealth handles the application Health Check
 func CheckHealth(c echo.Context) error {
-	health := Health{}
+	health := domain.Health{}
 	health.Status = "UP"
 	return c.JSON(http.StatusOK, health)
 }

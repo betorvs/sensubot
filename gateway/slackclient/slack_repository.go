@@ -6,7 +6,7 @@ import (
 
 	"github.com/betorvs/sensubot/appcontext"
 	"github.com/betorvs/sensubot/config"
-	"github.com/nlopes/slack"
+	"github.com/slack-go/slack"
 )
 
 // Slack struct for our slackbot
@@ -46,21 +46,19 @@ func (repo Slack) EphemeralFileMessage(channel string, user string, message stri
 }
 
 // New func to initializate Slack Client
-func New() (*Slack, error) {
-	return &Slack{Client: slack.New(config.SlackToken), Token: config.SlackToken, Name: "Slack to Sensu Go"}, nil
+func New() appcontext.Component {
+	return &Slack{Client: slack.New(config.Values.SlackToken), Token: config.Values.SlackToken, Name: "PlayByPost"}
 }
 
 func init() {
-	if config.GetEnv("TESTRUN", "false") == "true" {
+	if config.Values.TestRun {
 		return
 	}
-	SlackRepository, err := New()
-	if err != nil {
-		log.Println("[ERROR] Slack Repository not initiated")
-	}
-	appcontext.Current.Add(appcontext.SlackRepository, SlackRepository)
-	if appcontext.Current.Count() != 0 {
-		log.Println("[INFO] Slack Repository initiated")
+
+	appcontext.Current.Add(appcontext.SlackRepository, New)
+	if config.Values.SlackToken != "disabled" || config.Values.SlackSigningSecret != "disabled" {
+		logLocal := config.GetLogger()
+		logLocal.Info("Connected to Slack")
 	}
 
 }

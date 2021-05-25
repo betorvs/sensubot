@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2021-06-01
+### Changed
+- golang version to 1.16
+- golangspell-core templates
+- github actions
+- change from nlopes/slack to slack-go/slack
+- change tests to assert lib
+
 ## [0.0.1] - 2020-02-03
 ### Added
 - Slack Endpoint sensu_bot_url/sensubot/v1/slack

@@ -4,9 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
-	"time"
 
 	"github.com/betorvs/sensubot/appcontext"
 	"github.com/betorvs/sensubot/config"
@@ -21,7 +19,7 @@ type TelegramRepository struct {
 func (repo TelegramRepository) SendTelegramMessage(reqBody []byte) error {
 
 	// Send a post request with your token
-	telegramURL := fmt.Sprintf("%s%s/sendMessage", config.TelegramURL, config.TelegramToken)
+	telegramURL := fmt.Sprintf("%s%s/sendMessage", config.Values.TelegramURL, config.Values.TelegramToken)
 	req, err := http.NewRequest("POST", telegramURL, bytes.NewBuffer(reqBody))
 	if err != nil {
 		return err
@@ -38,15 +36,22 @@ func (repo TelegramRepository) SendTelegramMessage(reqBody []byte) error {
 	return nil
 }
 
+func New() appcontext.Component {
+	client := http.Client{
+		Timeout: config.Values.BotTimeout,
+	}
+	return &TelegramRepository{Client: &client}
+}
+
 func init() {
-	if config.GetEnv("TESTRUN", "false") == "true" {
+	if config.Values.TestRun {
 		return
 	}
-	client := http.Client{
-		Timeout: time.Second * config.BotTimeout,
+
+	appcontext.Current.Add(appcontext.TelegramRepository, New)
+	if config.Values.TelegramToken != "disabled" {
+		logLocal := config.GetLogger()
+		logLocal.Info("Connected to Telegram")
 	}
-	appcontext.Current.Add(appcontext.TelegramRepository, TelegramRepository{Client: &client})
-	if appcontext.Current.Count() != 0 {
-		log.Println("[INFO] Telegram Repository initiated")
-	}
+
 }

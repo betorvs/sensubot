@@ -2,16 +2,12 @@ package usecase
 
 import (
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/betorvs/sensubot/appcontext"
-	"github.com/nlopes/slack"
-)
-
-var (
-	slackEphemeralMessageCalls     int
-	slackEphemeralFileMessageCalls int
+	localtest "github.com/betorvs/sensubot/test"
+	"github.com/slack-go/slack"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestValidateBot(t *testing.T) {
@@ -21,12 +17,8 @@ func TestValidateBot(t *testing.T) {
 	timestamp := "1580475458"
 	baseString := fmt.Sprintf("v0:%s:%s", timestamp, bodyString)
 	signature := "v0=38918cc13bf5e8b9ad7d2b7d85595d5d19af21783b86dbcfe4716422277ae404"
-	if ValidateBot(signature, baseString, longString) != true {
-		t.Fatalf("Invalid 1.1 testValidateBot %s, %s", signature, longString)
-	}
-	if ValidateBot(signature, baseString, wrongLongString) == true {
-		t.Fatalf("Invalid 1.2 testValidateBot %s, %s", signature, wrongLongString)
-	}
+	assert.True(t, ValidateBot(signature, baseString, longString))
+	assert.False(t, ValidateBot(signature, baseString, wrongLongString))
 }
 
 func TestParseSlashCommand(t *testing.T) {
@@ -34,31 +26,13 @@ func TestParseSlashCommand(t *testing.T) {
 		Text: "help",
 	}
 	response, _ := ParseSlashCommand(&test1)
-	if !strings.Contains(response.Text, "help") {
-		t.Fatalf("Invalid 2.1 TestParseSlashCommand %s", response.Text)
-	}
-}
-
-type SlackRepositoryMock struct {
-}
-
-func (repo SlackRepositoryMock) EphemeralMessage(channel string, user string, message string) error {
-	slackEphemeralMessageCalls++
-	return nil
-}
-
-func (repo SlackRepositoryMock) EphemeralFileMessage(channel string, user string, message string, title string) error {
-	slackEphemeralFileMessageCalls++
-	return nil
+	assert.Contains(t, response.Text, "Please use")
 }
 
 func TestSendResultSlack(t *testing.T) {
-	repo := SlackRepositoryMock{}
-	appcontext.Current.Add(appcontext.SlackRepository, repo)
+	appcontext.Current.Add(appcontext.SlackRepository, localtest.InitSlackMock)
 	sendResultSlack("gel all namespaces", "USER123", "CHANNEL123")
 	expected := 1
-	if slackEphemeralMessageCalls != expected {
-		t.Fatalf("Invalid 3.1 TestSendResultSlack %d", expected)
-	}
+	assert.Equal(t, expected, localtest.SlackCalls)
 
 }

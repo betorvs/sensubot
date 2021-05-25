@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/betorvs/sensubot/appcontext"
 	"github.com/betorvs/sensubot/config"
@@ -21,9 +20,9 @@ type SensuRepository struct {
 
 // SensuGet func return []byte and error from a requested URL using a sensu api token
 func (repo SensuRepository) SensuGet(sensuurl string, token string) ([]byte, error) {
-	if config.DebugSensuRequests == "true" {
-		log.Printf("[INFO] sensuGet started: %s", sensuurl)
-	}
+	// if config.DebugSensuRequests == "true" {
+	// 	log.Printf("[INFO] sensuGet started: %s", sensuurl)
+	// }
 	req, err := http.NewRequest("GET", sensuurl, nil)
 	if err != nil {
 		return []byte{}, err
@@ -35,9 +34,9 @@ func (repo SensuRepository) SensuGet(sensuurl string, token string) ([]byte, err
 		log.Println("[ERROR] sensuGet create Client")
 		return []byte{}, err
 	}
-	if config.DebugSensuRequests == "true" {
-		log.Printf("[INFO] sensuGet response: %s", resp.Status)
-	}
+	// if config.DebugSensuRequests == "true" {
+	// 	log.Printf("[INFO] sensuGet response: %s", resp.Status)
+	// }
 	if resp.StatusCode != 200 {
 		log.Printf("[ERROR] sensuGet response %s", resp.Status)
 		err = fmt.Errorf("%s", resp.Status)
@@ -54,9 +53,9 @@ func (repo SensuRepository) SensuGet(sensuurl string, token string) ([]byte, err
 
 // SensuPost func return []byte and error from a POST using sensu api token
 func (repo SensuRepository) SensuPost(sensuurl string, token string, body []byte) ([]byte, error) {
-	if config.DebugSensuRequests == "true" {
-		log.Printf("[INFO]: sensuPost started: %s", sensuurl)
-	}
+	// if config.DebugSensuRequests == "true" {
+	// 	log.Printf("[INFO]: sensuPost started: %s", sensuurl)
+	// }
 	var req *http.Request
 	var err error
 	if body != nil {
@@ -81,9 +80,9 @@ func (repo SensuRepository) SensuPost(sensuurl string, token string, body []byte
 		log.Println("[ERROR] sensuPost create Client")
 		return []byte{}, err
 	}
-	if config.DebugSensuRequests == "true" {
-		log.Printf("[INFO] sensuPost response: %s", resp.Status)
-	}
+	// if config.DebugSensuRequests == "true" {
+	// 	log.Printf("[INFO] sensuPost response: %s", resp.Status)
+	// }
 	if resp.StatusCode > 204 {
 		log.Printf("[ERROR] sensuPost response: %s", resp.Status)
 		err = fmt.Errorf("%s", resp.Status)
@@ -114,15 +113,12 @@ func (repo SensuRepository) SensuHealth(sensuurl string) bool {
 	return true
 }
 
-func init() {
-	if config.GetEnv("TESTRUN", "false") == "true" {
-		return
-	}
+func New() appcontext.Component {
 	client := http.Client{
-		Timeout: time.Second * config.BotTimeout,
+		Timeout: config.Values.BotTimeout,
 	}
-	if config.CACertificate != "Absent" {
-		caCert, err := ioutil.ReadFile(config.CACertificate)
+	if config.Values.CACertificate != "Absent" {
+		caCert, err := ioutil.ReadFile(config.Values.CACertificate)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -130,7 +126,7 @@ func init() {
 		caCertPool.AppendCertsFromPEM(caCert)
 
 		client = http.Client{
-			Timeout: time.Second * config.BotTimeout,
+			Timeout: config.Values.BotTimeout,
 			Transport: &http.Transport{
 				TLSClientConfig: &tls.Config{
 					RootCAs: caCertPool,
@@ -138,9 +134,18 @@ func init() {
 			},
 		}
 	}
-	appcontext.Current.Add(appcontext.SensuRepository, SensuRepository{Client: &client})
-	if appcontext.Current.Count() != 0 {
-		log.Println("[INFO] Sensu Repository initiated")
+	return &SensuRepository{Client: &client}
+}
+
+func init() {
+	if config.Values.TestRun {
+		return
+	}
+
+	appcontext.Current.Add(appcontext.SensuRepository, New)
+	if config.Values.SensuAPI != "Absent" || config.Values.SensuAPIToken != "Absent" {
+		logLocal := config.GetLogger()
+		logLocal.Info("Connected to Sensu API")
 	}
 
 }

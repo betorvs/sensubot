@@ -9,16 +9,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetHealth(t *testing.T) {
+func TestGetInfo(t *testing.T) {
 	// Setup
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
-	c.SetPath("/sensubot/v1/health")
+	c.SetPath("/sensubot/v1/info")
 
 	// Assertions
-	if assert.NoError(t, CheckHealth(c)) {
+	if assert.NoError(t, GetInfo(c)) {
 		assert.Equal(t, http.StatusOK, rec.Code)
 	}
 }

@@ -15,7 +15,7 @@ import (
 
 // requestSensu func receives a string message, userid and channelid and process it using sensu api
 func requestSensu(message string) string {
-	if config.SensuAPI == "Absent" || config.SensuAPIToken == "Absent" {
+	if config.Values.SensuAPI == "Absent" || config.Values.SensuAPIToken == "Absent" {
 		return "SensuBot Not Configured to access Sensu API"
 	}
 	sensu := domain.GetSensuRepository()
@@ -23,11 +23,11 @@ func requestSensu(message string) string {
 	var s string
 	switch command["verb"] {
 	case "get":
-		if config.DebugSensuRequests == "true" {
-			log.Printf("[INFO] requestSensu verb get: %s", command["resource"])
-		}
+		// if config.DebugSensuRequests == "true" {
+		// 	log.Printf("[INFO] requestSensu verb get: %s", command["resource"])
+		// }
 		sensuURL := sensuURLGenerator(command["resource"], command["namespace"], command["name"])
-		data, err := sensu.SensuGet(sensuURL, config.SensuAPIToken)
+		data, err := sensu.SensuGet(sensuURL, config.Values.SensuAPIToken)
 		if err != nil {
 			output := fmt.Sprintf("Sorry. Request Failed: %s", err)
 			return output
@@ -225,7 +225,7 @@ func requestSensu(message string) string {
 		if err != nil {
 			log.Printf("[ERROR] requestSensu read bodyMarshal %s", err)
 		}
-		_, err = sensu.SensuPost(sensuURL, config.SensuAPIToken, bodymarshal)
+		_, err = sensu.SensuPost(sensuURL, config.Values.SensuAPIToken, bodymarshal)
 		if err != nil {
 			output := fmt.Sprintf("Sorry. Request Failed: %s", err)
 			return output
@@ -248,7 +248,7 @@ func requestSensu(message string) string {
 		if err != nil {
 			log.Printf("[ERROR] requestSensu bodyMarshal %s", err)
 		}
-		_, err = sensu.SensuPost(sensuURL, config.SensuAPIToken, bodymarshal)
+		_, err = sensu.SensuPost(sensuURL, config.Values.SensuAPIToken, bodymarshal)
 		if err != nil {
 			log.Printf("[ERROR] requestSensu using sensuPost %s", err)
 			output := fmt.Sprintf("Sorry. Request Failed: %s", err)
@@ -257,26 +257,26 @@ func requestSensu(message string) string {
 		}
 		s += fmt.Sprintf("Silenced %s Created on %s", command["name"], command["namespace"])
 	case "check_bot", "checkbot":
-		sensuScheme := config.SensuAPIScheme
-		if config.CACertificate != "Absent" || config.SensuAPIScheme != "http" {
+		sensuScheme := config.Values.SensuAPIScheme
+		if config.Values.CACertificate != "Absent" || config.Values.SensuAPIScheme != "http" {
 			sensuScheme = "https"
 		}
-		sensuURL := fmt.Sprintf(sensuScheme, config.SensuAPI)
+		sensuURL := fmt.Sprintf(sensuScheme, config.Values.SensuAPI)
 		if !sensu.SensuHealth(sensuURL) {
 			return "Sensu API is NOT reachable"
 		}
 		return "Sensu API is OK"
 	}
-	if config.DebugSensuRequests == "true" {
-		log.Printf("[INFO] requestSensu Sensu API Response %s", s)
-	}
+	// if config.DebugSensuRequests == "true" {
+	// 	log.Printf("[INFO] requestSensu Sensu API Response %s", s)
+	// }
 	return s
 }
 
 //sensuURLGenerator func create final sensu url
 func sensuURLGenerator(resource string, namespace string, name string) string {
-	sensuScheme := config.SensuAPIScheme
-	if config.CACertificate != "Absent" || config.SensuAPIScheme != "http" {
+	sensuScheme := config.Values.SensuAPIScheme
+	if config.Values.CACertificate != "Absent" || config.Values.SensuAPIScheme != "http" {
 		sensuScheme = "https"
 	}
 	basicURI := "api/core/v2/namespaces"
@@ -290,7 +290,7 @@ func sensuURLGenerator(resource string, namespace string, name string) string {
 		basicURI = fmt.Sprintf("api/core/v2/namespaces/%s/%s/%s", namespace, resource, name)
 	}
 
-	sensuBase := fmt.Sprintf("%s://%s/%s", sensuScheme, config.SensuAPI, basicURI)
+	sensuBase := fmt.Sprintf("%s://%s/%s", sensuScheme, config.Values.SensuAPI, basicURI)
 	return sensuBase
 }
 

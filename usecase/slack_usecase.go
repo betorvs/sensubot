@@ -10,7 +10,7 @@ import (
 
 	"github.com/betorvs/sensubot/config"
 	"github.com/betorvs/sensubot/domain"
-	"github.com/nlopes/slack"
+	"github.com/slack-go/slack"
 )
 
 // ValidateBot func to validate auth from Slack Bot
@@ -31,7 +31,7 @@ func ParseSlashCommand(data *slack.SlashCommand) (slack.Msg, error) {
 	testRequest := strings.Split(strings.ToLower(data.Text), " ")
 	if len(testRequest) == 1 {
 		// verb specialWord|resource resouce|name specialWord namespace_name specialWord entity_name
-		text := fmt.Sprintf("Invalid request received: %s \nPlease use: %s VERB RESOURCE NAME NAMESPACE", data.Text, config.SlackSlashCommand)
+		text := fmt.Sprintf("Invalid request received: %s \nPlease use: %s VERB RESOURCE NAME NAMESPACE", data.Text, config.Values.SlackSlashCommand)
 		message := slack.Msg{
 			Text: text}
 		res = message

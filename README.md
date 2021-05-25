@@ -1,17 +1,11 @@
 SensuBot
 ========
 
-Travis-CI: [![Build Status](https://travis-ci.org/betorvs/sensubot.svg?branch=master)](https://travis-ci.org/betorvs/sensubot)
+![Go Test](https://github.com/betorvs/sensubot/workflows/Go%20Test/badge.svg)
 
 SensuBot can receive messages from Slack and/or Telegram. It can answer simple commands like get, execute and silence.
 
 It can list almost all resources available in Sensu: assets, checks, entities, events, namespaces, mutators, filters, handlers, hooks and health.
-
-# Build
-
-```sh
-go build
-```
 
 # Environment Variables
 
@@ -125,3 +119,35 @@ or directly messages:
 ```
 get all checks
 ```
+
+# Build
+
+```sh
+go build
+```
+
+## Test and coverage
+
+Run the tests
+
+```sh 
+TESTRUN=true go test ./... -coverprofile=coverage.out
+
+go tool cover -html=coverage.out
+```
+
+Install [golangci-lint](https://github.com/golangci/golangci-lint#install) and run lint:
+
+```sh
+golangci-lint run
+```
+
+
+# references
+
+## Golang Spell
+The project was initialized using [Golang Spell](https://github.com/golangspell/golangspell).
+
+## Architectural Model
+The Architectural Model adopted to structure the application is based on The Clean Architecture.
+Further details can be found here: [The Clean Architecture](https://8thlight.com/blog/uncle-bob/2012/08/13/the-clean-architecture.html) and in the Clean Architecture Book.

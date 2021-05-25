@@ -1,16 +1,26 @@
 package config
 
 import (
-	"os"
-	"strconv"
 	"time"
+
+	"github.com/spf13/viper"
 )
 
-var (
-	// Port to be listened by application
+//Values stores the current configuration values
+var Values Config
+
+//Config contains the application's configuration values. Add here your own variables and bind it on init() function
+type Config struct {
+	//Port contains the port in which the application listens
 	Port string
-	// Timeout string
-	Timeout string
+	//AppName for displaying in Monitoring
+	AppName string
+	//LogLevel - DEBUG or INFO or WARNING or ERROR or PANIC or FATAL
+	LogLevel string
+	//TestRun state if the current execution is a test execution
+	TestRun bool
+	//UsePrometheus to enable prometheus metrics endpoint
+	UsePrometheus bool
 	// SlackToken string
 	SlackToken string
 	// SlackSigningSecret string
@@ -35,34 +45,41 @@ var (
 	DebugSensuRequests string
 	// BotTimeout time.Duration
 	BotTimeout time.Duration
-)
-
-// GetEnv func return a default value if missing an Environment variable
-func GetEnv(key, defaultValue string) string {
-	if value, ok := os.LookupEnv(key); ok {
-		return value
-	}
-	return defaultValue
 }
 
 func init() {
-	Port = GetEnv("SENSUBOT_PORT", "9090")
-	Timeout = GetEnv("SENSUBOT_TIMEOUT", "15")
-	DebugSensuRequests = GetEnv("SENSUBOT_DEBUG_SENSU_REQUESTS", "false")
-	SlackSlashCommand = GetEnv("SENSUBOT_SLASH_COMMAND", "/sensubot")
-	SlackToken = GetEnv("SENSUBOT_SLACK_TOKEN", "disabled")
-	SlackSigningSecret = GetEnv("SENSUBOT_SLACK_SIGNING_SECRET", "disabled")
-	SlackChannel = GetEnv("SENSUBOT_SLACK_CHANNEL", "disabled")
-	CACertificate = GetEnv("SENSUBOT_CA_CERTIFICATE", "Absent")
-	TelegramToken = GetEnv("SENSUBOT_TELEGRAM_TOKEN", "disabled")
-	TelegramURL = GetEnv("SENSUBOT_TELEGRAM_URL", "https://api.telegram.org/bot")
-	SensuAPIScheme = GetEnv("SENSUBOT_API_SCHEME", "http")
-	SensuAPIToken = GetEnv("SENSUBOT_API_TOKEN", "Absent")
-	SensuAPI = GetEnv("SENSUBOT_API_URL", "Absent")
+	_ = viper.BindEnv("TestRun", "TESTRUN")
+	viper.SetDefault("TestRun", false)
+	_ = viper.BindEnv("UsePrometheus", "USEPROMETHEUS")
+	viper.SetDefault("UsePrometheus", false)
+	_ = viper.BindEnv("Port", "PORT")
+	viper.SetDefault("Port", "9090")
+	_ = viper.BindEnv("AppName", "APP_NAME")
+	viper.SetDefault("AppName", "sensubot")
+	_ = viper.BindEnv("LogLevel", "LOG_LEVEL")
+	viper.SetDefault("LogLevel", "INFO")
+	_ = viper.BindEnv("BotTimeout", "SENSUBOT_TIMEOUT")
+	viper.SetDefault("BotTimeout", 15)
+	_ = viper.BindEnv("SlackSlashCommand", "SENSUBOT_SLASH_COMMAND")
+	viper.SetDefault("SlackSlashCommand", "/sensubot")
+	_ = viper.BindEnv("SlackToken", "SENSUBOT_SLACK_TOKEN")
+	viper.SetDefault("SlackToken", "disabled")
+	_ = viper.BindEnv("SlackSigningSecret", "SENSUBOT_SLACK_SIGNING_SECRET")
+	viper.SetDefault("SlackSigningSecret", "disabled")
+	_ = viper.BindEnv("SlackChannel", "SENSUBOT_SLACK_CHANNEL")
+	viper.SetDefault("SlackChannel", "disabled")
+	_ = viper.BindEnv("CACertificate", "SENSUBOT_CA_CERTIFICATE")
+	viper.SetDefault("CACertificate", "Absent")
+	_ = viper.BindEnv("TelegramToken", "SENSUBOT_TELEGRAM_TOKEN")
+	viper.SetDefault("TelegramToken", "disabled")
+	_ = viper.BindEnv("TelegramURL", "SENSUBOT_TELEGRAM_URL")
+	viper.SetDefault("TelegramURL", "https://api.telegram.org/bot")
+	_ = viper.BindEnv("SensuAPIScheme", "SENSUBOT_API_SCHEME")
+	viper.SetDefault("SensuAPIScheme", "http")
+	_ = viper.BindEnv("SensuAPIToken", "SENSUBOT_API_TOKEN")
+	viper.SetDefault("SensuAPIToken", "Absent")
+	_ = viper.BindEnv("SensuAPI", "SENSUBOT_API_URL")
+	viper.SetDefault("SensuAPI", "Absent")
 
-	tmpTimeout, err := strconv.Atoi(Timeout)
-	if err != nil {
-		tmpTimeout = 15
-	}
-	BotTimeout = time.Duration(tmpTimeout)
+	_ = viper.Unmarshal(&Values)
 }

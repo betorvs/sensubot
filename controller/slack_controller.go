@@ -10,7 +10,7 @@ import (
 	"github.com/betorvs/sensubot/usecase"
 
 	"github.com/labstack/echo/v4"
-	"github.com/nlopes/slack"
+	"github.com/slack-go/slack"
 )
 
 const (
@@ -20,7 +20,7 @@ const (
 
 // SlackEvents func receive an post from slack slash integration
 func SlackEvents(c echo.Context) error {
-	if config.SlackToken == disabled || config.SlackSigningSecret == disabled {
+	if config.Values.SlackToken == disabled || config.Values.SlackSigningSecret == disabled {
 		return c.JSON(http.StatusNotImplemented, nil)
 	}
 	var bodyBytes []byte
@@ -51,14 +51,14 @@ func SlackEvents(c echo.Context) error {
 	slackSignature := c.Request().Header.Get("X-Slack-Signature")
 
 	basestring := fmt.Sprintf("v0:%s:%s", slackRequestTimestamp, bodyString)
-	verifier := usecase.ValidateBot(slackSignature, basestring, config.SlackSigningSecret)
+	verifier := usecase.ValidateBot(slackSignature, basestring, config.Values.SlackSigningSecret)
 	if !verifier {
 		return c.JSON(http.StatusForbidden, nil)
 	}
-	if data.ChannelID != config.SlackChannel {
+	if data.ChannelID != config.Values.SlackChannel {
 		return c.JSON(http.StatusForbidden, nil)
 	}
-	if data.Command != config.SlackSlashCommand {
+	if data.Command != config.Values.SlackSlashCommand {
 		return c.JSON(http.StatusForbidden, nil)
 	}
 	res, err := usecase.ParseSlashCommand(data)

@@ -12,7 +12,7 @@ import (
 
 // TelegramEvents func receive an post from Telegram slash integration
 func TelegramEvents(c echo.Context) error {
-	if config.TelegramToken == disabled {
+	if config.Values.TelegramToken == disabled {
 		return c.JSON(http.StatusNotImplemented, nil)
 	}
 	event := new(domain.WebhookBody)

@@ -1,2 +1,4 @@
 .vscode*
 sensubot
+ca.pem
+coverage.out
