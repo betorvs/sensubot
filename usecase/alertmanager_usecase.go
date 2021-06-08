@@ -97,7 +97,7 @@ func requestAlertManager(command map[string]string, role, displayName string) st
 								r += fmt.Sprintf("  - %s: %s \n", k, v)
 							}
 						}
-						r += fmt.Sprintf("  Annotations: \n")
+						r += "  Annotations: \n"
 						for k, v := range a.Annotations {
 							r += fmt.Sprintf("  - %s: %s \n", k, v)
 						}
@@ -115,7 +115,7 @@ func requestAlertManager(command map[string]string, role, displayName string) st
 				if err == nil {
 					for _, s := range silences {
 						r += fmt.Sprintf("Silence ID: %s , Created by: %s, State: %s \n  - Comment: %s \n", *s.ID, *s.CreatedBy, *s.Status.State, *s.Comment)
-						r += fmt.Sprintf("  - Matchers:\n")
+						r += "  - Matchers:\n"
 						for _, v := range s.Matchers {
 							r += fmt.Sprintf("  - %s : %s \n", *v.Name, *v.Value)
 						}
