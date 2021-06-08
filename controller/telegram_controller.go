@@ -20,7 +20,7 @@ func TelegramEvents(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	if strings.Contains(event.Message.Text, "/start") || strings.Contains(event.Message.Text, "/help") {
-		err := usecase.SendHelpMessage(event.Message.Chat.ID)
+		err := usecase.SendHelpMessage(int64(event.Message.Chat.ID))
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err)
 		}

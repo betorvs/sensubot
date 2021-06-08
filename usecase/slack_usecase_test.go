@@ -31,7 +31,7 @@ func TestParseSlashCommand(t *testing.T) {
 
 func TestSendResultSlack(t *testing.T) {
 	appcontext.Current.Add(appcontext.SlackRepository, localtest.InitSlackMock)
-	sendResultSlack("gel all namespaces", "USER123", "CHANNEL123")
+	sendResultSlack("gel all namespaces", "USER123", "CHANNEL123", "Test User")
 	expected := 1
 	assert.Equal(t, expected, localtest.SlackCalls)
 

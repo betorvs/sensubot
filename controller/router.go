@@ -24,4 +24,5 @@ func MapRoutes(e *echo.Echo) {
 	g.GET("/info", GetInfo)
 	g.POST("/slack", SlackEvents)
 	g.POST("/telegram", TelegramEvents)
+	g.POST("/gchat", GChatEvents)
 }

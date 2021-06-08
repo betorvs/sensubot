@@ -4,10 +4,12 @@ import "sync"
 
 //List of consts containing the names of the available components in the Application Context - appcontext.Current (Add your component names here as constants)
 const (
-	Logger             = "Logger"
-	SensuRepository    = "SensuRepository"
-	SlackRepository    = "SlackRepository"
-	TelegramRepository = "TelegramRepository"
+	Logger                 = "Logger"
+	SensuRepository        = "SensuRepository"
+	SlackRepository        = "SlackRepository"
+	TelegramRepository     = "TelegramRepository"
+	GoogleChatRepository   = "GoogleChatRepository"
+	AlertManagerRepository = "AlertManagerRepository"
 )
 
 //Component is the Base interface for all Components

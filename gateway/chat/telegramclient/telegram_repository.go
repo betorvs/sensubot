@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/betorvs/sensubot/appcontext"
 	"github.com/betorvs/sensubot/config"
@@ -17,19 +18,23 @@ type TelegramRepository struct {
 
 // SendTelegramMessage takes a chatID and sends answer to them
 func (repo TelegramRepository) SendTelegramMessage(reqBody []byte) error {
-
+	logLocal := config.GetLogger()
+	logLocal.Debug("starting SendTelegramMessage")
 	// Send a post request with your token
 	telegramURL := fmt.Sprintf("%s%s/sendMessage", config.Values.TelegramURL, config.Values.TelegramToken)
-	req, err := http.NewRequest("POST", telegramURL, bytes.NewBuffer(reqBody))
+	req, err := http.NewRequest(http.MethodPost, telegramURL, bytes.NewBuffer(reqBody))
 	if err != nil {
+		logLocal.Error(err)
 		return err
 	}
 	req.Header.Set("Content-Type", "application/json")
 	res, err := repo.Client.Do(req)
 	if err != nil {
+		logLocal.Error(err)
 		return err
 	}
 	if res.StatusCode != http.StatusOK {
+		logLocal.Error(err)
 		return errors.New("unexpected status" + res.Status)
 	}
 	defer res.Body.Close()
@@ -38,7 +43,7 @@ func (repo TelegramRepository) SendTelegramMessage(reqBody []byte) error {
 
 func New() appcontext.Component {
 	client := http.Client{
-		Timeout: config.Values.BotTimeout,
+		Timeout: time.Second * time.Duration(config.Values.BotTimeout),
 	}
 	return &TelegramRepository{Client: &client}
 }
@@ -48,10 +53,11 @@ func init() {
 		return
 	}
 
-	appcontext.Current.Add(appcontext.TelegramRepository, New)
 	if config.Values.TelegramToken != "disabled" {
+		appcontext.Current.Add(appcontext.TelegramRepository, New)
 		logLocal := config.GetLogger()
 		logLocal.Info("Connected to Telegram")
+		logLocal.Debug("Telegram Admin list ", config.Values.TelegramAdminIDList)
 	}
 
 }

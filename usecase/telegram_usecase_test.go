@@ -9,18 +9,19 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestSendResultTelegram(t *testing.T) {
+	appcontext.Current.Add(appcontext.TelegramRepository, localtest.InitTelegramMock)
+	appcontext.Current.Add(appcontext.Logger, localtest.InitMockLogger)
+	sendResultTelegram("@sensubot gel namespaces", "Test User", int64(123123123), int64(123456))
+	expected := 1
+	assert.Equal(t, expected, localtest.TelegramCalls)
+}
+
 func TestParseTelegramCommand(t *testing.T) {
 	appcontext.Current.Add(appcontext.TelegramRepository, localtest.InitTelegramMock)
 	message := new(domain.WebhookBody)
 	message.Message.Text = "/help"
-	message.Message.Chat.ID = int64(12345678)
+	message.Message.Chat.ID = 12345678
 	response, _ := ParseTelegramCommand(message)
-	assert.Equal(t, "OK", response)
-}
-
-func TestSendResultTelegram(t *testing.T) {
-	appcontext.Current.Add(appcontext.TelegramRepository, localtest.InitTelegramMock)
-	sendResultTelegram("gel all namespaces", int64(123456))
-	expected := 1
-	assert.Equal(t, expected, localtest.TelegramCalls)
+	assert.Equal(t, "Accepted", response)
 }

@@ -47,7 +47,7 @@ func (repo Slack) EphemeralFileMessage(channel string, user string, message stri
 
 // New func to initializate Slack Client
 func New() appcontext.Component {
-	return &Slack{Client: slack.New(config.Values.SlackToken), Token: config.Values.SlackToken, Name: "PlayByPost"}
+	return &Slack{Client: slack.New(config.Values.SlackToken), Token: config.Values.SlackToken, Name: config.Values.AppName}
 }
 
 func init() {
@@ -55,10 +55,11 @@ func init() {
 		return
 	}
 
-	appcontext.Current.Add(appcontext.SlackRepository, New)
 	if config.Values.SlackToken != "disabled" || config.Values.SlackSigningSecret != "disabled" {
+		appcontext.Current.Add(appcontext.SlackRepository, New)
 		logLocal := config.GetLogger()
 		logLocal.Info("Connected to Slack")
+		logLocal.Debug("Slack Admin list ", config.Values.SlackAdminIDList)
 	}
 
 }

@@ -10,6 +10,7 @@ import (
 
 	"github.com/betorvs/sensubot/config"
 	"github.com/betorvs/sensubot/domain"
+	"github.com/betorvs/sensubot/utils"
 	"github.com/slack-go/slack"
 )
 
@@ -36,7 +37,7 @@ func ParseSlashCommand(data *slack.SlashCommand) (slack.Msg, error) {
 			Text: text}
 		res = message
 	} else {
-		go sendResultSlack(data.Text, data.UserID, data.ChannelID)
+		go sendResultSlack(data.Text, data.UserID, data.ChannelID, data.UserName)
 		message := slack.Msg{
 			ResponseType: "in_channel",
 			Text:         "Request Accepted"}
@@ -46,9 +47,13 @@ func ParseSlashCommand(data *slack.SlashCommand) (slack.Msg, error) {
 	return res, nil
 }
 
-func sendResultSlack(text string, userid string, channel string) {
-	message := requestSensu(text)
-
+func sendResultSlack(text, userid, channel, username string) {
+	role := "user"
+	if len(config.Values.SlackAdminIDList) != 0 && utils.StringInSlice(userid, config.Values.SlackAdminIDList) {
+		role = "admin"
+	}
+	message := requestToBot(text, role, username)
+	logLocal := config.GetLogger()
 	// Send a message to user in slack
 	slack := domain.GetSlackRepository()
 	var errSlack error
@@ -58,6 +63,6 @@ func sendResultSlack(text string, userid string, channel string) {
 		errSlack = slack.EphemeralMessage(channel, userid, message)
 	}
 	if errSlack != nil {
-		log.Printf("[ERROR] sendResultSlack %s", errSlack)
+		logLocal.Errorf("sendResultSlack %s", errSlack)
 	}
 }
