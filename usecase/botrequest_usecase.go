@@ -57,7 +57,7 @@ func parseRequest(initialText string) map[string]string {
 	entityKnown := false
 	for k, v := range data {
 		value := strings.ToLower(v)
-		fmt.Println(k, v)
+		// fmt.Println(k, v)
 		switch {
 		case k == 0:
 			if utils.StringInSlice(value, verb) {

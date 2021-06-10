@@ -10,8 +10,8 @@ import (
 
 // requestOpsgenie func receives a map[string]string command, role and display Name and process it using Opsgenie api
 func requestOpsgenie(command map[string]string, role, displayName string) string {
-	if len(config.Values.OpsgenieAPIKey) == 0 {
-		return "SensuBot Not Configured to access any Opsgenie"
+	if config.Values.OpsgenieAPIKey == "Absent" {
+		return "SensuBot Not Configured to access Opsgenie"
 	}
 	var s string
 	logLocal := config.GetLogger()
