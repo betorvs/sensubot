@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - google chat integration
 - alert manager integration
+- opsgenie integration
 - user and password authentication option for sensu api
 - test directory with mock interfaces
 - new config variables for security options: 

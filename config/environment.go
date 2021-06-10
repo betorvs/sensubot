@@ -67,6 +67,14 @@ type Config struct {
 	DeleteAllowedResources []string
 	// AlertManagerEndpoints []string
 	AlertManagerEndpoints []string
+	// AlertManagerUsername string
+	AlertManagerUsername string
+	// AlertManagerPassword string
+	AlertManagerPassword string
+	// OpsgenieAPIKey string
+	OpsgenieAPIKey string
+	// OpsgenieRegion string
+	OpsgenieRegion string
 }
 
 func init() {
@@ -128,6 +136,14 @@ func init() {
 	viper.SetDefault("DeleteAllowedResources", []string{"events", "checks"})
 	_ = viper.BindEnv("AlertManagerEndpoints", "SENSUBOT_ALERTMANAGER_ENDPOINTS")
 	viper.SetDefault("AlertManagerEndpoints", []string{})
+	_ = viper.BindEnv("AlertManagerUsername", "SENSUBOT_ALERTMANAGER_USERNAME")
+	viper.SetDefault("AlertManagerUsername", "Absent")
+	_ = viper.BindEnv("AlertManagerPassword", "SENSUBOT_ALERTMANAGER_PASSWORD")
+	viper.SetDefault("AlertManagerPassword", "Absent")
+	_ = viper.BindEnv("OpsgenieAPIKey", "SENSUBOT_OPSGENIE_KEY")
+	viper.SetDefault("OpsgenieAPIKey", "Absent")
+	_ = viper.BindEnv("OpsgenieRegion", "SENSUBOT_OPSGENIE_REGION")
+	viper.SetDefault("OpsgenieRegion", "us")
 
 	_ = viper.Unmarshal(&Values)
 }

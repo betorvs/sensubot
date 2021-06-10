@@ -22,6 +22,9 @@ func (repo AlertManagerRepository) GetAlertManager(amURL string) (result []byte,
 		logLocal.Error("GET ", err)
 		return nil, err
 	}
+	if config.Values.AlertManagerUsername != "Absent" && config.Values.AlertManagerPassword != "Absent" {
+		req.SetBasicAuth(config.Values.AlertManagerUsername, config.Values.AlertManagerPassword)
+	}
 	resp, err := repo.Client.Do(req)
 	if err != nil {
 		logLocal.Error("client ", err)

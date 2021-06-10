@@ -32,7 +32,7 @@ func requestToBot(message, role, displayName string) string {
 
 	case "opsgenie":
 		logLocal.Debug("using opsgenie integraton")
-		return "Opsgenie support not implemented yet"
+		return requestOpsgenie(command, role, displayName)
 
 	case "alertmanager":
 		logLocal.Debug("using alertmanager integraton")

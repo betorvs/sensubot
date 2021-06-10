@@ -10,6 +10,7 @@ const (
 	TelegramRepository     = "TelegramRepository"
 	GoogleChatRepository   = "GoogleChatRepository"
 	AlertManagerRepository = "AlertManagerRepository"
+	OpsgenieRepository     = "OpsgenieRepository"
 )
 
 //Component is the Base interface for all Components

@@ -9,6 +9,7 @@ import (
 	_ "github.com/betorvs/sensubot/gateway/chat/slackclient"
 	_ "github.com/betorvs/sensubot/gateway/chat/telegramclient"
 	_ "github.com/betorvs/sensubot/gateway/integrations/alertmanagerclient"
+	_ "github.com/betorvs/sensubot/gateway/integrations/opsgenieclient"
 	_ "github.com/betorvs/sensubot/gateway/integrations/sensuclient"
 	"github.com/labstack/echo/v4"
 )
