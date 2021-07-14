@@ -87,7 +87,7 @@ func getOnCall(team string) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		s += fmt.Sprintf("%s", result.OnCallParticipants)
+		s += fmt.Sprintf("%v", result.OnCallParticipants)
 
 	}
 
