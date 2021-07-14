@@ -43,6 +43,13 @@ func requestOpsgenie(command map[string]string, role, displayName string) string
 			s += fmt.Sprintf("ID: %s, Alert Name: %s, Priority: %v \n", result.TinyId, result.Message, result.Priority)
 			s += fmt.Sprintf("Description:\n %s \n", result.Description)
 
+		case "oncall":
+			result, err := getOnCall(command["name"])
+			if err != nil {
+				logLocal.Error(err)
+			}
+			s += result
+
 			// end of command resource
 		}
 		// end of command verb
@@ -66,4 +73,23 @@ func getAlerts(tinyID string) (*alert.GetAlertResult, error) {
 		return result, err
 	}
 	return result, nil
+}
+
+func getOnCall(team string) (string, error) {
+	repo := domain.GetOpsgenieRepository()
+	schedules, err := repo.ListSchedules()
+	if err != nil {
+		return "", err
+	}
+	var s string
+	for _, v := range schedules.Schedule {
+		result, err := repo.GetOnCall(v.Name)
+		if err != nil {
+			return "", err
+		}
+		s += fmt.Sprintf("%s", result.OnCallParticipants)
+
+	}
+
+	return s, nil
 }

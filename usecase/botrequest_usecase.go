@@ -27,14 +27,32 @@ func requestToBot(message, role, displayName string) string {
 	}
 	switch command["integration"] {
 	case "sensu":
+		listResources := []string{"assets", "health", "checks", "hooks", "entities", "handlers", "filters", "mutators", "namespaces", "silenced", "events"}
+		if !utils.StringInSlice(command["resource"], listResources) {
+			localError := fmt.Sprintf("Resource %s not implemented", command["resource"])
+			logLocal.Debug("Role ", role, " Display Name ", displayName, " and response ", localError)
+			return localError
+		}
 		logLocal.Debug("using sensu integraton")
 		return requestSensu(command, role, displayName)
 
 	case "opsgenie":
+		listResources := []string{"alerts", "incidents"}
+		if !utils.StringInSlice(command["resource"], listResources) {
+			localError := fmt.Sprintf("Resource %s not implemented", command["resource"])
+			logLocal.Debug("Role ", role, " Display Name ", displayName, " and response ", localError)
+			return localError
+		}
 		logLocal.Debug("using opsgenie integraton")
 		return requestOpsgenie(command, role, displayName)
 
 	case "alertmanager":
+		listResources := []string{"alerts"}
+		if !utils.StringInSlice(command["resource"], listResources) {
+			localError := fmt.Sprintf("Resource %s not implemented", command["resource"])
+			logLocal.Debug("Role ", role, " Display Name ", displayName, " and response ", localError)
+			return localError
+		}
 		logLocal.Debug("using alertmanager integraton")
 		return requestAlertManager(command, role, displayName)
 	}
